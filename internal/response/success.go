@@ -1,4 +1,4 @@
-package handler
+package response
 
 import (
 	"encoding/json"
@@ -9,10 +9,10 @@ type SuccessResponse struct {
 	Message string `json:"message"`
 }
 
-func SuccessHandler(w http.ResponseWriter, r *http.Request) {
+func SuccessHandler(message string, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	response := SuccessResponse{Message: "OK"}
+	response := SuccessResponse{Message: message}
 
 	json.NewEncoder(w).Encode(response)
 }
