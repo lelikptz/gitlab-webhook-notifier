@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
-	"github.com/lelikptz/gitlab-webhook-notifier/internal/handler"
-	"github.com/lelikptz/gitlab-webhook-notifier/internal/notifier"
-	"github.com/lelikptz/gitlab-webhook-notifier/internal/webhook"
 	"log"
 	"net/http"
+
+	"github.com/joho/godotenv"
+	"github.com/lelikptz/gitlab-webhook-notifier/internal/operation/webhook"
+	"github.com/lelikptz/gitlab-webhook-notifier/internal/response"
 )
 
 func init() {
@@ -20,8 +20,8 @@ func init() {
 func main() {
 	log.Println("Start web server")
 
-	http.HandleFunc("/webhook", setup())
-	http.HandleFunc("/", handler.HandleNotFound)
+	http.HandleFunc("/webhook", setupWebhook())
+	http.HandleFunc("/", response.NotFoundErrorResponse)
 
 	err := http.ListenAndServe(":8080", nil)
 
@@ -30,9 +30,9 @@ func main() {
 	}
 }
 
-func setup() func(writer http.ResponseWriter, request *http.Request) {
-	return handler.NewWebHookHandler(
-		notifier.NewTelegramNotifier(),
-		webhook.NewRequestParser(),
-	).Webhook
+func setupWebhook() func(writer http.ResponseWriter, request *http.Request) {
+	return webhook.NewHandler(
+		*webhook.NewNotifier(),
+		*webhook.NewRequestParser(),
+	).Handle
 }

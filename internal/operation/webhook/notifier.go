@@ -1,20 +1,21 @@
-package notifier
+package webhook
 
 import (
-	telegram "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"os"
 	"strconv"
+
+	telegram "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-type TelegramNotifier struct {
+type Notifier struct {
 }
 
-func NewTelegramNotifier() *TelegramNotifier {
-	return &TelegramNotifier{}
+func NewNotifier() *Notifier {
+	return &Notifier{}
 }
 
-func (t *TelegramNotifier) Send(message string) {
+func (t *Notifier) Send(message string) {
 	bot, err := telegram.NewBotAPI(os.Getenv("TELEGRAM_BOT_TOKEN"))
 	if err != nil {
 		log.Printf("something went wrong %v", err)
@@ -35,6 +36,8 @@ func (t *TelegramNotifier) Send(message string) {
 	}
 
 	msg := telegram.NewMessage(int64(chatID), message)
+	msg.ParseMode = "HTML"
+
 	_, err = bot.Send(msg)
 	if err != nil {
 		log.Printf("something went wrong %v", err)
