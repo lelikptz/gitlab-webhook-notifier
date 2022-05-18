@@ -2,6 +2,7 @@ package webhook
 
 type Event interface {
 	GetMessage() string
+	IsSuccessful() bool
 }
 
 type Payload struct {
